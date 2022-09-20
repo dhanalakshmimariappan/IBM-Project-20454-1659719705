@@ -1,0 +1,74 @@
+// C++ code
+//
+int lightLed= 13;
+int DGI= 7; //DGI: alert: danger gas level led indicator of gas sensor
+int MGI= 8; //MGI: medium gas level led indicator of gas sensor
+int LGI= 4; //LGI: low gas level led indicator of gas sensor
+int buzzPin= 11;
+int trigPin= 12;
+int echoPin= 2;
+int GSRpin= A3; //GSR: gas sensor read pin
+int PTpin= A5; //photo transistor pin
+
+void setup()
+{
+  pinMode(echoPin, INPUT);
+  pinMode(PTpin,INPUT);
+  pinMode(GSRpin,INPUT);
+  pinMode(buzzPin,OUTPUT);
+  pinMode(lightLed, OUTPUT);
+  pinMode(trigPin,OUTPUT);
+  pinMode(DGI,OUTPUT);
+  pinMode(MGI,OUTPUT);
+  pinMode(LGI,OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop()
+{
+  //Here, the gas sensor lets the user be known of the gas levels in the kitchen while they cook
+  //kitchens are usually known for the presence of gases like iso-butane and n-butane in the cylinder 
+  int readGas= analogRead(GSRpin);
+  if (readGas>= 50 && readGas<100){
+    //safe limits in kitchen
+    Serial.println("Dobby can't smell much apart from the heart-stoppin' aroma of something good Cookin'");
+    digitalWrite(LGI, HIGH);
+  }
+  else if(readGas>=100 && readGas<150){
+    //medium limits in kitchen
+    Serial.println("Dobby wishes its master would check-in with the smell. It isn't worse, but still means trouble!");
+    digitalWrite(MGI,HIGH);
+  }
+  else{
+    //danger
+    Serial.println("Dobby sends its master alarms. They must not enter the kitchen before getting someone to correct the trouble in tow");
+    digitalWrite(DGI,HIGH);
+  }
+  
+  //the sensor here is designed to read the intensity of sunlight entering a house's rooms
+  int readIntensity= analogRead(PTpin);
+  if (readIntensity>=0 && readIntensity<20){
+    Serial.println("Dobby sees darkness everywhere and no light to blink!");
+    digitalWrite(lightLed,HIGH);
+  }
+  else{
+    Serial.println("Dobby sees light enough to scare vampires away. Swish and flick and the lights switch off!");
+    digitalWrite(lightLed,LOW);
+  }
+  
+  //Here, we are using an ultrasonic sensor to alert the users approaching inflammable substances while wearing sanitiser by detecting its smell
+  digitalWrite(trigPin,HIGH);
+  delayMicroseconds(100);
+  digitalWrite(trigPin,LOW);
+  float t= pulseIn(echoPin,HIGH);
+  float d= (t*0.0343)/2;
+  if(d>2 && d<=36){
+    Serial.println("Dobby can smell sanitiser from the user's hands. Please stay at a secure distance from inflammable items");
+    digitalWrite(buzzPin, HIGH);
+  }
+  else{
+    digitalWrite(buzzPin,LOW);
+  }
+}
+
+SourceCode: https://www.tinkercad.com/things/8rcrG3ApwGq-smarthome/editel
