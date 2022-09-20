@@ -1,0 +1,56 @@
+int ip1=5;
+int ip2=4;
+
+void setup()
+{
+  pinMode(13,OUTPUT);
+  pinMode(6,INPUT);
+  pinMode(ip1,OUTPUT);
+  pinMode(ip2,INPUT);
+  Serial.begin(9600);
+  
+}
+
+void loop()
+{
+  double l=analogRead(A1);
+  if(l){
+    Serial.print("Switch ON Light. Movement detected\n");
+  	double a = analogRead(A0);
+  	double ca=a/1024;
+  	double v=ca*5;
+  	double o=v-0.5;
+  	double c=o*100;
+  	Serial.print("Current Temperature:");
+  	Serial.println(c);
+  	if (c>35)
+    	Serial.println("!!!!Temperature Hot, Turn on fan!!!!1 ");
+  
+  	else
+     	Serial.println("Temperature cool,enjoy [:)]->-<!");
+  }
+  else{
+    Serial.println("Switch off light. no motion. save power:)");
+  }
+  int b=digitalRead(2);
+  if (b==0)
+  {
+    digitalWrite(13,HIGH);
+  	Serial.println(":0 Thief broke in. Be alert :0");
+  }
+  else{
+    digitalWrite(13,LOW);
+  }
+     
+  digitalWrite(ip1, LOW);
+  digitalWrite(ip1, HIGH);
+  delayMicroseconds(100); 
+  digitalWrite(ip1,LOW);
+  float duration=pulseIn(ip2,HIGH);
+  float distance=(duration*0.0343)/2;
+  if(distance>300)
+    Serial.println("Switch on motor, wate tank low or empty");
+  else
+    Serial.println(" <3 <3 <3 Water level sufficient, make lemonades <3 <3 <3.");
+  delay(5000);
+}
